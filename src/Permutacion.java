@@ -22,8 +22,15 @@ public class Permutacion {
     		i++;
     	}
     	System.out.println(elemsStrings);
-
-    	return null;
+    	String[] elementos = elemsStrings.split(",");
+    	int n = 2;                  //Tipos para escoger
+        int r = elementos.length;   //Elementos elegidos
+        List<String[]> tuples = new LinkedList<String[]>();
+        boolean matriz[][] = new boolean[r][r];
+        tuples = perm(elementos, "", n, r, tuples, matriz);
+        System.out.println(tuples);
+        System.out.println(tuples.size());
+    	return tuples;
     }
     
     private static List<String[]> perm(String[] elem, String act, int n, int r, List<String[]> tuples, boolean[][] matriz) {

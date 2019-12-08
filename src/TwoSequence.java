@@ -8,7 +8,7 @@ class TwoSequence
 { 
 // function to find out  
 // the minimum penalty 
-static void getMinimumPenalty(String x, String y,  
+static int getMinimumPenalty(String x, String y,  
                               int pxy, int pgap) 
 { 
     int i, j; // intialising variables 
@@ -134,7 +134,7 @@ static void getMinimumPenalty(String x, String y,
     { 
         System.out.print((char)yans[i]); 
     } 
-    return; 
+    return dp[m][n]; 
 }
 
 private static void printMatrix(int[][] dp) {
@@ -161,7 +161,10 @@ public static void main(String[] args)
   
     // calling the function to 
     // calculate the result 
-    getMinimumPenalty(gene1, gene2,  
-        misMatchPenalty, gapPenalty); 
+    int min = getMinimumPenalty(gene1, gene2,  
+        misMatchPenalty, gapPenalty);
+    
+    System.out.println();
+    System.out.println(min);
 } 
 } 
