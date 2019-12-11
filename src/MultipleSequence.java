@@ -12,6 +12,7 @@ public class MultipleSequence {
 	private static int C = 2;
 	private static int G = 3;
 	private static int T = 4;
+	private static int limit = 1;
 	
 	private static int nFirst = 3;
 	
@@ -28,6 +29,11 @@ public class MultipleSequence {
 	// Driver code 
 	public static void main(String[] args) 
 	{ 
+		List<String> vecinos = new ArrayList<String>();
+		vecinos.add("A__T");
+		vecinos.add("AG_T");
+		vecinos.add("T_GT");
+		List<List<String>> vecinoss = getVecinosPosibles(vecinos);
 	    // input strings 
 	    String gene1 = "AGGGCT"; 
 	    String gene2 = "AGGCA"; 
@@ -71,12 +77,111 @@ public class MultipleSequence {
 	    for(QualifiedSequence q : orderedSequences) {
 	    	System.out.println(q.getValue());
 	    }
-	    QualifiedSequence selectedSequence = getRandom(orderedSequences);
-	    //TODO: setear profile y armarlo
-  		//seteo el primer profile entre las dos secuencias		
-  		setFirstProfile(genes, selectedSequence);
-  		System.out.println("el profile");
-  		printMatrix(profile);
+	    //GRASP
+	    grasp(orderedSequences, genes);
+//	    QualifiedSequence selectedSequence = getRandom(orderedSequences);
+//	    //TODO: setear profile y armarlo
+//  		//seteo el primer profile entre las dos secuencias		
+//  		setFirstProfile(genes, selectedSequence);
+//  		System.out.println("el profile");
+//  		printMatrix(profile);
+	}
+
+	private static void grasp(List<QualifiedSequence> orderedSequences, List<String> genes) {
+		int currentScore = 0; // o infinito +/-
+		for(int i = 0; i < limit; i++) {
+			QualifiedSequence selectedSequence = getRandom(orderedSequences);
+		    //TODO: setear profile y armarlo
+	  		//seteo el primer profile entre las dos secuencias		
+	  		setFirstProfile(genes, selectedSequence);
+	  		System.out.println("el profile");
+	  		printMatrix(profile);
+	  		//TODO: generar todas las alineaciones con los demas secuencias vs el profile
+	  		List<String> result = localSearch(new ArrayList<String>());
+	  		int score = score(result);
+	  		if(score < currentScore) {
+	  			currentScore = score;
+	  			// guardar mejor alineamiento general. todas las instancias
+	  		}
+		}
+		// mostrar todas las instancias
+		
+	}
+	
+	// obtiene el score de una secuencia
+	private static int score(List<String> result) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private static List<String> localSearch(List<String> sequences) {
+		List<String> result = sequences;
+		int score = 0;//ver cual esel score
+		List<List<String>> vecinos = getVecinosPosibles(sequences);
+		for(List<String> vecino : vecinos){
+			int currentScore = score(vecino);
+			if(currentScore < score) {//si es mejor
+				return localSearch(vecino);
+			}
+		}
+		// si recorri todos y no mejoraron retorno sequences
+		return sequences;
+	}
+
+	private static List<List<String>> getVecinosPosibles(List<String> sequences) {
+		List<String> originalSequences = sequences;
+		List<List<String>> vecinos = new ArrayList<List<String>>();
+		for(int i = 0; i < sequences.size(); i++) {
+			System.out.println("index: " + i);
+			System.out.println(sequences.get(i));
+			String originalSeq = sequences.get(i);
+			for(int idx = 0; idx < sequences.get(i).length(); idx++) {
+				if(originalSeq.charAt(idx) == '_') {
+					List<String> posibles = new ArrayList<String>();
+					if(idx > 0) {
+						StringBuilder sb = new StringBuilder(originalSeq);
+						char toReplace = originalSeq.charAt(idx-1);
+						if(toReplace != '_') {
+							sb.setCharAt(idx-1, '_');
+							sb.setCharAt(idx, toReplace);
+							String seq = sb.toString();
+							System.out.println(seq);
+							posibles.add(seq);
+						}
+					}
+					if(idx < originalSeq.length() - 1){
+						String newSeq = sequences.get(i);
+						StringBuilder sb = new StringBuilder(newSeq);
+						char toReplace = newSeq.charAt(idx+1);
+						if(toReplace != '_') {
+							sb.setCharAt(idx+1, '_');
+							sb.setCharAt(idx, toReplace);
+							String seq = sb.toString();
+							System.out.println(seq);
+							posibles.add(seq);
+						}
+					}
+					for(String posible : posibles) {
+						vecinos.add(rearmar(posible, i, originalSequences));
+					}
+				}
+			}
+		}
+		return vecinos;
+	}
+
+	private static List<String> rearmar(String seq, int i, List<String> sequences) {
+//		sequences.set(i, seq);
+//		return sequences;
+		List<String> vecino = new ArrayList<String>();
+		for(int idx = 0; idx < sequences.size();  idx++) {
+			if(i == idx) {
+				vecino.add(seq);
+			}else {
+				vecino.add(sequences.get(idx));
+			}
+		}
+		return vecino;
 	}
 
 	//Setea el profile entre las dos secuencias
