@@ -38,7 +38,15 @@ public class MultipleSequence {
 		sequencias.add("T_GT");
 		List<Vecino> vecinoss = getVecinosPosibles(sequencias);
 		**/
-		 
+		
+		//test de score por columna
+		/**List<String> columnas = new ArrayList<String>();
+		columnas.add("A");
+		columnas.add("C");
+		columnas.add("A");
+		columnas.add("_");
+		getScoreColumn(columnas);
+		**/
 		
 	    // input strings 
 	    String gene1 = "AGGGCT"; 
@@ -125,13 +133,56 @@ public class MultipleSequence {
 		int score = 0;//ver cual esel score
 		List<Vecino> vecinos = getVecinosPosibles(sequences);
 		for(Vecino vecino : vecinos){
-			int currentScore = score(vecino.getVecino());
+			int currentScore = scoreVecino(sequences, vecino);
 			if(currentScore < score) {//si es mejor
 				return localSearch(vecino.getVecino());
 			}
 		}
 		// si recorri todos y no mejoraron retorno sequences
 		return sequences;
+	}
+
+	// calcula el mejor score entre el original y el vecino
+	private static int scoreVecino(List<String> originalSequences, Vecino vecino) {
+		int idxFirstColumn = vecino.getFirstColumn();
+		int idxSecondColumn = vecino.getSecondColumn();
+		
+		List<String> originalFirstColumn = getColumn(idxFirstColumn, originalSequences); 
+		List<String> originalSecondColumn = getColumn(idxSecondColumn, originalSequences);
+		List<String> firstColumn = getColumn(idxFirstColumn, vecino.getVecino());
+		List<String> secondColumn = getColumn(idxSecondColumn, vecino.getVecino());
+		
+		int originalScore = getScoreColumn(originalFirstColumn) + getScoreColumn(originalSecondColumn);
+		int newScore = getScoreColumn(firstColumn) + getScoreColumn(secondColumn);
+		
+		if(newScore < originalScore) {
+			// devolver la nueva secuencia con su score
+		}
+		
+		return 0;
+	}
+
+	public static int getScoreColumn(List<String> column) {
+		List<String[]> permutaciones = Permutacion.permWrap(column);
+		int score = 0;
+		for(String[] tupla : permutaciones) {
+			System.out.println(tupla[0] + "-" + tupla[1]);
+			//en esta version solo me enfoque en que sean distintos los caracteres añadiendo el mismatchPenalty
+			if(!column.get(Integer.valueOf(tupla[0])).equals(column.get(Integer.valueOf(tupla[1])))) {
+				score += misMatchPenalty;
+			}
+		}
+		
+		return score;
+	}
+
+	private static List<String> getColumn(int idxFirstColumn, List<String> sequences) {
+		List<String> column = new ArrayList<String>();
+		for(String sequence : sequences) {
+			String character = String.valueOf(sequence.charAt(idxFirstColumn));
+			column.add(character);
+		}
+		return column;
 	}
 
 	private static List<Vecino> getVecinosPosibles(List<String> sequences) {
