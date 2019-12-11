@@ -13,6 +13,8 @@ public class MultipleSequence {
 	private static int G = 3;
 	private static int T = 4;
 	private static int limit = 1;
+	private static int misMatchPenalty = 3; 
+	private static int gapPenalty = 2; 
 	
 	private static int nFirst = 3;
 	
@@ -29,11 +31,15 @@ public class MultipleSequence {
 	// Driver code 
 	public static void main(String[] args) 
 	{ 
-		List<String> vecinos = new ArrayList<String>();
-		vecinos.add("A__T");
-		vecinos.add("AG_T");
-		vecinos.add("T_GT");
-		List<List<String>> vecinoss = getVecinosPosibles(vecinos);
+		//test de generacion de vecinos vecinos
+		/**List<String> sequencias = new ArrayList<String>();
+		sequencias.add("A__T");
+		sequencias.add("AG_T");
+		sequencias.add("T_GT");
+		List<Vecino> vecinoss = getVecinosPosibles(sequencias);
+		**/
+		 
+		
 	    // input strings 
 	    String gene1 = "AGGGCT"; 
 	    String gene2 = "AGGCA"; 
@@ -117,27 +123,25 @@ public class MultipleSequence {
 	private static List<String> localSearch(List<String> sequences) {
 		List<String> result = sequences;
 		int score = 0;//ver cual esel score
-		List<List<String>> vecinos = getVecinosPosibles(sequences);
-		for(List<String> vecino : vecinos){
-			int currentScore = score(vecino);
+		List<Vecino> vecinos = getVecinosPosibles(sequences);
+		for(Vecino vecino : vecinos){
+			int currentScore = score(vecino.getVecino());
 			if(currentScore < score) {//si es mejor
-				return localSearch(vecino);
+				return localSearch(vecino.getVecino());
 			}
 		}
 		// si recorri todos y no mejoraron retorno sequences
 		return sequences;
 	}
 
-	private static List<List<String>> getVecinosPosibles(List<String> sequences) {
+	private static List<Vecino> getVecinosPosibles(List<String> sequences) {
 		List<String> originalSequences = sequences;
-		List<List<String>> vecinos = new ArrayList<List<String>>();
+		List<Vecino> vecinos = new ArrayList<Vecino>();
 		for(int i = 0; i < sequences.size(); i++) {
-			System.out.println("index: " + i);
-			System.out.println(sequences.get(i));
 			String originalSeq = sequences.get(i);
 			for(int idx = 0; idx < sequences.get(i).length(); idx++) {
 				if(originalSeq.charAt(idx) == '_') {
-					List<String> posibles = new ArrayList<String>();
+					List<SequenceVecina> posibles = new ArrayList<SequenceVecina>();
 					if(idx > 0) {
 						StringBuilder sb = new StringBuilder(originalSeq);
 						char toReplace = originalSeq.charAt(idx-1);
@@ -145,8 +149,7 @@ public class MultipleSequence {
 							sb.setCharAt(idx-1, '_');
 							sb.setCharAt(idx, toReplace);
 							String seq = sb.toString();
-							System.out.println(seq);
-							posibles.add(seq);
+							posibles.add(new SequenceVecina(seq, idx-1, idx));
 						}
 					}
 					if(idx < originalSeq.length() - 1){
@@ -157,11 +160,10 @@ public class MultipleSequence {
 							sb.setCharAt(idx+1, '_');
 							sb.setCharAt(idx, toReplace);
 							String seq = sb.toString();
-							System.out.println(seq);
-							posibles.add(seq);
+							posibles.add(new SequenceVecina(seq, idx+1, idx));
 						}
 					}
-					for(String posible : posibles) {
+					for(SequenceVecina posible : posibles) {
 						vecinos.add(rearmar(posible, i, originalSequences));
 					}
 				}
@@ -170,18 +172,18 @@ public class MultipleSequence {
 		return vecinos;
 	}
 
-	private static List<String> rearmar(String seq, int i, List<String> sequences) {
-//		sequences.set(i, seq);
-//		return sequences;
+	private static Vecino rearmar(SequenceVecina posible, int i, List<String> sequences) {
 		List<String> vecino = new ArrayList<String>();
+		
 		for(int idx = 0; idx < sequences.size();  idx++) {
 			if(i == idx) {
-				vecino.add(seq);
+				vecino.add(posible.getVecino());
 			}else {
 				vecino.add(sequences.get(idx));
 			}
 		}
-		return vecino;
+		// me guardo las columnas que tengo que comparar despues
+		return new Vecino(vecino, posible.getFirstColumn(), posible.getSecondColumn()); 
 	}
 
 	//Setea el profile entre las dos secuencias
@@ -249,8 +251,6 @@ public class MultipleSequence {
 		String gene2 = genes.get(Integer.valueOf(tuple[1]));
 		// intialsing penalties 
 	    // of different types 
-	    int misMatchPenalty = 3; 
-	    int gapPenalty = 2; 
 		Alignment alignment = TwoSequence.getMinimumPenalty(gene1, gene2,  
 		        misMatchPenalty, gapPenalty);
 		QualifiedSequence qualifiedSequence = new QualifiedSequence(alignment.getPenalty(), tuple, alignment.getAlignment());

@@ -3,7 +3,8 @@
 import java.io.*; 
 import java.util.*; 
 import java.lang.*; 
-  
+
+// esta clase la saque de un ejemplo y la fui retocando a demanda según lo necesario
 class TwoSequence 
 { 
 // function to find out  
