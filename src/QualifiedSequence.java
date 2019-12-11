@@ -1,21 +1,14 @@
 
 public class QualifiedSequence {
 
-	private int value;
 	private String[] sequences;
-	private String alignment;
+	private Alignment alignment;
 	
-	public String getAlignment() {
+	public Alignment getAlignment() {
 		return alignment;
 	}
-	public void setAlignment(String alignment) {
+	public void setAlignment(Alignment alignment) {
 		this.alignment = alignment;
-	}
-	public int getValue() {
-		return value;
-	}
-	public void setValue(int value) {
-		this.value = value;
 	}
 	public String[] getSequences() {
 		return sequences;
@@ -28,9 +21,14 @@ public class QualifiedSequence {
 		
 	}
 	
-	public QualifiedSequence(int value, String[] sequences, String alignment) {
+//	public QualifiedSequence(int value, String[] sequences, String alignment) {
+//		this.sequences = sequences;
+//		this.value = value;
+//		this.alignment = alignment;
+//	}
+	
+	public QualifiedSequence(Alignment alignment, String[] sequences) {
 		this.sequences = sequences;
-		this.value = value;
 		this.alignment = alignment;
 	}
 }

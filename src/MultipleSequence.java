@@ -91,17 +91,17 @@ public class MultipleSequence {
 	    }
 	    Collections.sort(orderedSequences, new Comparator<QualifiedSequence>(){
             public int compare(QualifiedSequence s1,QualifiedSequence s2){
-				return s1.getValue() - s2.getValue();
+				return s1.getAlignment().getPenalty() - s2.getAlignment().getPenalty();
                 // Write your logic here.
           }});   
 	    
-	    System.out.println("asdasdasd");
 	    System.out.println("tamaño es" + orderedSequences.size());
 	    for(QualifiedSequence q : orderedSequences) {
-	    	System.out.println(q.getValue());
+	    	System.out.println(q.getAlignment().getPenalty());
 	    }
 	    //GRASP
-	    grasp(orderedSequences, genes);
+	    int score = grasp(orderedSequences, genes);
+	    System.out.println("El mejor score fue: " + score);
 //	    QualifiedSequence selectedSequence = getRandom(orderedSequences);
 //	    //TODO: setear profile y armarlo
 //  		//seteo el primer profile entre las dos secuencias		
@@ -110,8 +110,8 @@ public class MultipleSequence {
 //  		printMatrix(profile);
 	}
 
-	private static void grasp(List<QualifiedSequence> orderedSequences, List<String> genes) {
-		int currentScore = 0; // o infinito +/-
+	private static int grasp(List<QualifiedSequence> orderedSequences, List<String> genes) {
+		int currentScore = (int) Double.POSITIVE_INFINITY; // o infinito +/-
 		for(int i = 0; i < limit; i++) {
 			QualifiedSequence selectedSequence = getRandom(orderedSequences);
 		    //TODO: setear profile y armarlo
@@ -129,7 +129,8 @@ public class MultipleSequence {
 	  		}
 		}
 		// mostrar todas las instancias
-		
+		System.out.println(currentScore);
+		return currentScore;
 	}
 	
 	// obtiene el score de una secuencia
@@ -312,11 +313,10 @@ public class MultipleSequence {
 	private static QualifiedSequence getQualifiedSequence(String[] tuple, List<String> genes) {
 		String gene1 = genes.get(Integer.valueOf(tuple[0]));
 		String gene2 = genes.get(Integer.valueOf(tuple[1]));
-		// intialsing penalties 
-	    // of different types 
 		Alignment alignment = TwoSequence.getMinimumPenalty(gene1, gene2,  
 		        misMatchPenalty, gapPenalty);
-		QualifiedSequence qualifiedSequence = new QualifiedSequence(alignment.getPenalty(), tuple, alignment.getAlignment());
+//		QualifiedSequence qualifiedSequence = new QualifiedSequence(alignment.getPenalty(), tuple, alignment.getAlignment());
+		QualifiedSequence qualifiedSequence = new QualifiedSequence(alignment, tuple);
 		return qualifiedSequence;
 	}
 

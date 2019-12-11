@@ -1,22 +1,33 @@
 
 public class Alignment {
-	private String alignment;
+	private String alignmentOne;
+	
+	private String alignmentTwo;
 	
 	private int penalty;
 	
 	public Alignment() {}
 	
-	public Alignment(String alignment, int penalty) {
-		this.alignment = alignment;
+	public Alignment(String alignmentOne, String alignmentTwo, int penalty) {
+		this.alignmentOne = alignmentOne;
+		this.alignmentTwo = alignmentTwo;
 		this.penalty = penalty;
 	}
 
-	public String getAlignment() {
-		return alignment;
+	public String getAlignmentOne() {
+		return alignmentOne;
 	}
 
-	public void setAlignment(String alignment) {
-		this.alignment = alignment;
+	public void setAlignmentOne(String alignmentOne) {
+		this.alignmentOne = alignmentOne;
+	}
+
+	public String getAlignmentTwo() {
+		return alignmentTwo;
+	}
+
+	public void setAlignmentTwo(String alignmentTwo) {
+		this.alignmentTwo = alignmentTwo;
 	}
 
 	public int getPenalty() {

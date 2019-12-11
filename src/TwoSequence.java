@@ -126,19 +126,21 @@ static Alignment getMinimumPenalty(String x, String y,
                      "aligning the genes = "); 
     System.out.print(dp[m][n] + "\n"); 
     System.out.println("The aligned genes are :"); 
+    String alignmentOne = "";
     for (i = id; i <= l; i++) 
     { 
+    	alignmentOne += (char)xans[i];
         System.out.print((char)xans[i]); 
     } 
     System.out.print("\n"); 
-    String alignment = "";
+    String alignmentTwo = "";
     for (i = id; i <= l; i++) 
     { 
-        alignment += (char)yans[i];
+    	alignmentTwo += (char)yans[i];
     	System.out.print((char)yans[i]); 
     } 
 //    return dp[m][n]; 
-    return new Alignment(alignment, dp[m][n]);
+    return new Alignment(alignmentOne, alignmentTwo, dp[m][n]);
 }
 
 private static void printMatrix(int[][] dp) {
