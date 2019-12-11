@@ -7,11 +7,13 @@ import java.util.List;
 public class MultipleSequence {
 	
 	private static int[][] profile;
+	//posiciones sobre el profile por letra
 	private static int GAP = 0;
 	private static int A = 1;
 	private static int C = 2;
 	private static int G = 3;
 	private static int T = 4;
+	
 	private static int limit = 1;
 	private static int misMatchPenalty = 3; 
 	private static int gapPenalty = 2; 
@@ -28,16 +30,23 @@ public class MultipleSequence {
 		}
 	} 
 	  
+	private static void printVecino(List<String> newSequence) {
+		for(String sequence: newSequence) {
+			System.out.println(sequence);
+		}
+	}
+	
 	// Driver code 
 	public static void main(String[] args) 
 	{ 
-		//test de generacion de vecinos vecinos
-		/**List<String> sequencias = new ArrayList<String>();
-		sequencias.add("A__T");
-		sequencias.add("AG_T");
-		sequencias.add("T_GT");
-		List<Vecino> vecinoss = getVecinosPosibles(sequencias);
-		**/
+		//test de generacion de vecinos  y local search
+//		List<String> sequencias = new ArrayList<String>();
+//		sequencias.add("A__T");
+//		sequencias.add("AG_T");
+//		sequencias.add("T_GT");
+//		localSearch(sequencias);
+//		List<Vecino> vecinoss = getVecinosPosibles(sequencias);
+		
 		
 		//test de score por columna
 		/**List<String> columnas = new ArrayList<String>();
@@ -111,6 +120,7 @@ public class MultipleSequence {
 	  		System.out.println("el profile");
 	  		printMatrix(profile);
 	  		//TODO: generar todas las alineaciones con los demas secuencias vs el profile
+	  		System.out.println("Llamada inicial a local search");
 	  		List<String> result = localSearch(new ArrayList<String>());
 	  		int score = score(result);
 	  		if(score < currentScore) {
@@ -129,13 +139,15 @@ public class MultipleSequence {
 	}
 
 	private static List<String> localSearch(List<String> sequences) {
-		List<String> result = sequences;
-		int score = 0;//ver cual esel score
 		List<Vecino> vecinos = getVecinosPosibles(sequences);
 		for(Vecino vecino : vecinos){
-			int currentScore = scoreVecino(sequences, vecino);
-			if(currentScore < score) {//si es mejor
+			List<String> newSequence = scoreVecino(sequences, vecino);
+			if(newSequence != null) {//si es mejor
+				System.out.println("Encontro un mejor vecino");
+				printVecino(newSequence);
 				return localSearch(vecino.getVecino());
+			}else {
+				System.out.println("No encontro un mejor vecino");
 			}
 		}
 		// si recorri todos y no mejoraron retorno sequences
@@ -143,7 +155,7 @@ public class MultipleSequence {
 	}
 
 	// calcula el mejor score entre el original y el vecino
-	private static int scoreVecino(List<String> originalSequences, Vecino vecino) {
+	private static List<String> scoreVecino(List<String> originalSequences, Vecino vecino) {
 		int idxFirstColumn = vecino.getFirstColumn();
 		int idxSecondColumn = vecino.getSecondColumn();
 		
@@ -156,10 +168,10 @@ public class MultipleSequence {
 		int newScore = getScoreColumn(firstColumn) + getScoreColumn(secondColumn);
 		
 		if(newScore < originalScore) {
-			// devolver la nueva secuencia con su score
+			return vecino.getVecino();
 		}
 		
-		return 0;
+		return null;
 	}
 
 	public static int getScoreColumn(List<String> column) {
