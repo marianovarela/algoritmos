@@ -92,7 +92,6 @@ public class MultipleSequence {
 	    Collections.sort(orderedSequences, new Comparator<QualifiedSequence>(){
             public int compare(QualifiedSequence s1,QualifiedSequence s2){
 				return s1.getAlignment().getPenalty() - s2.getAlignment().getPenalty();
-                // Write your logic here.
           }});   
 	    
 	    System.out.println("tamaño es" + orderedSequences.size());
@@ -102,14 +101,9 @@ public class MultipleSequence {
 	    //GRASP
 	    int score = grasp(orderedSequences, genes);
 	    System.out.println("El mejor score fue: " + score);
-//	    QualifiedSequence selectedSequence = getRandom(orderedSequences);
-//	    //TODO: setear profile y armarlo
-//  		//seteo el primer profile entre las dos secuencias		
-//  		setFirstProfile(genes, selectedSequence);
-//  		System.out.println("el profile");
-//  		printMatrix(profile);
 	}
-
+	
+	//GRASP
 	private static int grasp(List<QualifiedSequence> orderedSequences, List<String> genes) {
 		int currentScore = (int) Double.POSITIVE_INFINITY; // o infinito +/-
 		for(int i = 0; i < limit; i++) {
@@ -119,7 +113,28 @@ public class MultipleSequence {
 	  		setFirstProfile(genes, selectedSequence);
 	  		System.out.println("el profile");
 	  		printMatrix(profile);
+	  		
 	  		//TODO: generar todas las alineaciones con los demas secuencias vs el profile
+	  		boolean[] populated = new boolean[10];
+	  		//estas dos ya estan populadas en el profile
+	  		populated[Integer.valueOf(selectedSequence.getSequences()[0])] = true;
+	  		populated[Integer.valueOf(selectedSequence.getSequences()[1])] = true;
+	  		List<ProfileSequence> profiledSequences = new ArrayList<ProfileSequence>(); 
+	  		for(int idx = 0; idx < genes.size(); idx++) {
+	  			if(!populated[idx]) {
+	  				System.out.println("Encontre una secuencia sin aparejar con el profile");
+	  				ProfileSequence profileSequence = Profile.getMinimumPenalty(genes.get(idx),  
+	  				        misMatchPenalty, gapPenalty, profile);
+	  				profiledSequences.add(profileSequence);
+	  			}
+	  		}
+	  		Collections.sort(profiledSequences, new Comparator<ProfileSequence>(){
+	            public int compare(ProfileSequence s1,ProfileSequence s2){
+					return s1.getScore() - s2.getScore();
+	          }});
+	  		
+	  		//de aca tengo que seleccionar un aalineamiento y agregarlo al profile y actualizarlo
+	  		
 	  		System.out.println("Llamada inicial a local search");
 	  		List<String> result = localSearch(new ArrayList<String>());
 	  		int score = score(result);
@@ -128,7 +143,6 @@ public class MultipleSequence {
 	  			// guardar mejor alineamiento general. todas las instancias
 	  		}
 		}
-		// mostrar todas las instancias
 		System.out.println(currentScore);
 		return currentScore;
 	}
