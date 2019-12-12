@@ -7,8 +7,10 @@ public class Profile {
 	private static int C = 2;
 	private static int G = 3;
 	private static int T = 4;
-
-	public static ProfileSequence getMinimumPenalty(String x, int pxy, int pgap, int[][] profile) {
+	
+	
+	//idx es el id de la secuencia que estoy evaluando
+	public static ProfileSequence getMinimumPenalty(int idx, String x, int pxy, int pgap, int[][] profile) {
 		printMatrix(profile);
 		int i, j; // intialising variables 
 	      
@@ -33,15 +35,16 @@ public class Profile {
 		printMatrix(dp);
 		
 	    // calcuting the minimum penalty 
+		int[][] newProfile = crearCopia(profile);
 	    for (i = 1; i <= m; i++) 
 	    { 
 	        for (j = 1; j <= n; j++) 
 	        { 
 	        		System.out.println(x);
 	        		System.out.println(i);
-        			dp[i][j] = Math.min(Math.min(dp[i - 1][j - 1] + getCosto(x, pxy, pgap, dp, profile, i, j),  
-                            dp[i - 1][j] + getCosto(x, pxy, pgap, dp, profile, i, j)),  
-                            dp[i][j - 1] + getCosto(x, pxy, pgap, dp, profile, i, j));
+        			dp[i][j] = Math.min(Math.min(dp[i - 1][j - 1] + getCosto(x, pxy, pgap, dp, newProfile, i, j),  
+                            dp[i - 1][j] + getCosto(x, pxy, pgap, dp, newProfile, i, j)),  
+                            dp[i][j - 1] + getCosto(x, pxy, pgap, dp, newProfile, i, j));
 	        } 
 	    } 
 	  
@@ -57,8 +60,8 @@ public class Profile {
 	    // the respective strings 
 	    int xans[] = new int[l + 1];  
 	    int yans[] = new int[l + 1]; 
-	    /**  aca hay que armar el alineamiento
-	    while ( !(i == 0 || j == 0)) 
+	    //aca hay que armar el alineamiento
+	    /*while ( !(i == 0 || j == 0)) 
 	    { 
 	        if (x.charAt(i - 1) == y.charAt(j - 1)) 
 	        { 
@@ -132,17 +135,18 @@ public class Profile {
 	    	alignmentTwo += (char)yans[i];
 	    	System.out.print((char)yans[i]); 
 	    } 
-	    **/
+	    */
 //	    return dp[m][n]; 
 	    printMatrix(dp);
 	    System.out.println("el score final es " + dp[m][n]);
-	    return new ProfileSequence();
+	    printMatrix(newProfile);
+	    return new ProfileSequence(idx, x,  dp[m][n], newProfile);
 	}
 
 	private static int getCosto(String sequence, int pxy, int pgap, int[][] dp, int[][] profile, int i, int j) {
 		//printMatrix(dp);
-		printMatrix(profile);
-		// si coninciden suma por 0 y sino agrego mm
+//		int[][] newProfile = crearCopia(profile);
+		// si coinciden suma por 0 y sino agrego mm
 		if(i < sequence.length()) {
 			char character = sequence.charAt(i);
 			int scoreGAP = character == '_' ? 0 : pxy * getOccurrences(character, profile, i, GAP);
@@ -157,20 +161,36 @@ public class Profile {
 		}
 	}
 
+	private static int[][] crearCopia(int[][] src) {
+	    int length = src.length;
+	    int[][] target = new int[length][src[0].length];
+	    for (int i = 0; i < length; i++) {
+	        System.arraycopy(src[i], 0, target[i], 0, src[i].length);
+	    }
+	    return target;
+	}
+
 	private static int getOccurrences(char character, int[][] profile, int i, int idxLetter) {
+		int ocurrences = 0;
 		switch(character) 
 		{ 
 		    case 'A': 
-		        return profile[A][i];
+		    	ocurrences = profile[A][i];
+		    	profile[A][i]++;
 		    case 'C': 
-		    	return profile[C][i]; 
+		    	ocurrences = profile[C][i];
+		    	profile[C][i]++;
 		    case 'G': 
-		    	return profile[G][i];  
+		    	ocurrences = profile[G][i];
+		    	profile[G][i]++;
 		    case 'T': 
-		    	return profile[T][i]; 
+		    	ocurrences = profile[T][i];
+		    	profile[T][i]++;
 		    default:// "-" 
-		    	return profile[GAP][i];  
+		    	ocurrences = profile[GAP][i];
+		    	profile[GAP][i]++;
 		}
+		return ocurrences;
 	}
 
 	private static void printMatrix(int[][] dp) {

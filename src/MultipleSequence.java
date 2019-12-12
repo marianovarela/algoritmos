@@ -123,7 +123,7 @@ public class MultipleSequence {
 	  		for(int idx = 0; idx < genes.size(); idx++) {
 	  			if(!populated[idx]) {
 	  				System.out.println("Encontre una secuencia sin aparejar con el profile");
-	  				ProfileSequence profileSequence = Profile.getMinimumPenalty(genes.get(idx),  
+	  				ProfileSequence profileSequence = Profile.getMinimumPenalty(idx, genes.get(idx),  
 	  				        misMatchPenalty, gapPenalty, profile);
 	  				profiledSequences.add(profileSequence);
 	  			}
