@@ -28,8 +28,6 @@ public class Permutacion {
         List<String[]> tuples = new LinkedList<String[]>();
         boolean matriz[][] = new boolean[r][r];
         tuples = perm(elementos, "", n, r, tuples, matriz);
-        System.out.println(tuples);
-        System.out.println(tuples.size());
     	return tuples;
     }
     

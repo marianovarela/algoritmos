@@ -14,7 +14,7 @@ public class MultipleSequence {
 	private static int G = 3;
 	private static int T = 4;
 	
-	private static int limit = 1;
+	private static int limit = 5;
 	private static int misMatchPenalty = 3; 
 	private static int gapPenalty = 2; 
 	
@@ -107,18 +107,18 @@ public class MultipleSequence {
 	private static int grasp(List<QualifiedSequence> orderedSequences, List<String> genes) {
 		int currentScore = (int) Double.POSITIVE_INFINITY; // o infinito +/-
 		for(int i = 0; i < limit; i++) {
+			List<String> currentGenes = new ArrayList<String>(genes);
 			QualifiedSequence selectedSequence = getRandom(orderedSequences);
-		    //TODO: setear profile y armarlo
 	  		//seteo el primer profile entre las dos secuencias		
 	  		setFirstProfile(genes, selectedSequence);
-	  		System.out.println("el profile");
 	  		printMatrix(profile);
 	  		
-	  		//TODO: generar todas las alineaciones con los demas secuencias vs el profile
-	  		boolean[] populated = new boolean[10];
+	  		boolean[] populated = new boolean[genes.size()];
 	  		//estas dos ya estan populadas en el profile
 	  		populated[Integer.valueOf(selectedSequence.getSequences()[0])] = true;
 	  		populated[Integer.valueOf(selectedSequence.getSequences()[1])] = true;
+	  		currentGenes.set(Integer.valueOf(selectedSequence.getSequences()[0]), selectedSequence.getAlignment().getAlignmentOne());
+	  		currentGenes.set(Integer.valueOf(selectedSequence.getSequences()[1]), selectedSequence.getAlignment().getAlignmentTwo());
 	  		List<ProfileSequence> profiledSequences = new ArrayList<ProfileSequence>(); 
 	  		for(int idx = 0; idx < genes.size(); idx++) {
 	  			if(!populated[idx]) {
@@ -128,19 +128,28 @@ public class MultipleSequence {
 	  				profiledSequences.add(profileSequence);
 	  			}
 	  		}
+	  		// las ordeno
 	  		Collections.sort(profiledSequences, new Comparator<ProfileSequence>(){
 	            public int compare(ProfileSequence s1,ProfileSequence s2){
 					return s1.getScore() - s2.getScore();
 	          }});
 	  		
-	  		//de aca tengo que seleccionar un aalineamiento y agregarlo al profile y actualizarlo
+	  		//selecciono la de mejor score en este caso y la marco como evaluada
+	  		ProfileSequence selectedProfileSequence = profiledSequences.get(0);
+	  		populated[selectedProfileSequence.getSequence()] = true;
+	  		//actualizo el profile para la proxima llamada
+	  		currentGenes.set(selectedProfileSequence.getSequence(), selectedProfileSequence.getAlignment());
+	  		profile = selectedProfileSequence.getProfile();
 	  		
 	  		System.out.println("Llamada inicial a local search");
-	  		List<String> result = localSearch(new ArrayList<String>());
+	  		List<String> result = localSearch(currentGenes);
 	  		int score = score(result);
+	  		System.out.println("Eval score original: " + currentScore + " con el obtenido: " + score);
 	  		if(score < currentScore) {
 	  			currentScore = score;
-	  			// guardar mejor alineamiento general. todas las instancias
+	  			System.out.println("Actualizo el nuevo score: " + currentScore);
+	  		}else {
+	  			System.out.println("Mantengo el score anterior");
 	  		}
 		}
 		System.out.println(currentScore);
@@ -149,8 +158,12 @@ public class MultipleSequence {
 	
 	// obtiene el score de una secuencia
 	private static int score(List<String> result) {
-		// TODO Auto-generated method stub
-		return 0;
+		int score = 0;
+		for(int i = 0; i < result.get(0).length(); i++) {
+			List<String> column = getColumn(i, result);
+			score += getScoreColumn(column);
+		}
+		return score;
 	}
 
 	private static List<String> localSearch(List<String> sequences) {
@@ -206,7 +219,13 @@ public class MultipleSequence {
 	private static List<String> getColumn(int idxFirstColumn, List<String> sequences) {
 		List<String> column = new ArrayList<String>();
 		for(String sequence : sequences) {
-			String character = String.valueOf(sequence.charAt(idxFirstColumn));
+			String character;
+			if(idxFirstColumn < sequence.length()) {
+				character = String.valueOf(sequence.charAt(idxFirstColumn));
+			}else {
+				character = "_";// caso en el que necesito un gap?
+			}
+			
 			column.add(character);
 		}
 		return column;
