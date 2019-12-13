@@ -21,12 +21,6 @@ public class QualifiedSequence {
 		
 	}
 	
-//	public QualifiedSequence(int value, String[] sequences, String alignment) {
-//		this.sequences = sequences;
-//		this.value = value;
-//		this.alignment = alignment;
-//	}
-	
 	public QualifiedSequence(Alignment alignment, String[] sequences) {
 		this.sequences = sequences;
 		this.alignment = alignment;

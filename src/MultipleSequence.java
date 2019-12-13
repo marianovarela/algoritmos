@@ -14,7 +14,7 @@ public class MultipleSequence {
 	private static int G = 3;
 	private static int T = 4;
 	
-	private static int limit = 5;
+	private static int limit = 15;
 	private static int misMatchPenalty = 3; 
 	private static int gapPenalty = 2; 
 	
@@ -58,27 +58,23 @@ public class MultipleSequence {
 		**/
 		
 	    // input strings 
-	    String gene1 = "AGGGCT"; 
-	    String gene2 = "AGGCA"; 
-	    String gene3 = "AGGCAT"; 
-	    String gene4 = "AGAGCA"; 
-//	    String gene5 = "AGTGCAT"; 
-//	    String gene6 = "AGGCA"; 
-//	    String gene7 = "AGCAT"; 
-//	    String gene8 = "AGGTCA"; 
-//	    String gene9 = "TAGGCAT"; 
+	    String gene1 = "AGGGCTGGGCT"; 
+	    String gene2 = "AGGGCTAAGCT"; 
+	    String gene3 = "AGTGATAA"; 
+	    String gene4 = "AGGG"; 
+	    String gene5 = "CGGGGCT"; 
+	    String gene6 = "GGGGCTAAGCT"; 
+	    String gene7 = "TGTGATAA"; 
+	    String gene8 = "AAGGG"; 
 	    List<String> genes = new ArrayList<String>();
 	    genes.add(gene1);
 	    genes.add(gene2);
 	    genes.add(gene3);
 	    genes.add(gene4);
-//	    genes.add(gene5);
-//	    genes.add(gene6);
-//	    genes.add(gene7);
-//	    genes.add(gene8);
-//	    genes.add(gene9);
-	    
-	    
+	    genes.add(gene5);
+	    genes.add(gene6);
+	    genes.add(gene7);
+	    genes.add(gene8);
 	    
 	    // calling the function to 
 	    // calculate the result 
@@ -216,6 +212,7 @@ public class MultipleSequence {
 		return score;
 	}
 
+	//de la lista de secuencias obtiene la columna del primer parametro
 	private static List<String> getColumn(int idxFirstColumn, List<String> sequences) {
 		List<String> column = new ArrayList<String>();
 		for(String sequence : sequences) {
@@ -290,6 +287,7 @@ public class MultipleSequence {
 		applyToProfileFirstSequence(sequence1);
 		printMatrix(profile);
 		applyToProfile(sequence2);
+		
 		printMatrix(profile);
 	}
 
@@ -348,7 +346,6 @@ public class MultipleSequence {
 		String gene2 = genes.get(Integer.valueOf(tuple[1]));
 		Alignment alignment = TwoSequence.getMinimumPenalty(gene1, gene2,  
 		        misMatchPenalty, gapPenalty);
-//		QualifiedSequence qualifiedSequence = new QualifiedSequence(alignment.getPenalty(), tuple, alignment.getAlignment());
 		QualifiedSequence qualifiedSequence = new QualifiedSequence(alignment, tuple);
 		return qualifiedSequence;
 	}

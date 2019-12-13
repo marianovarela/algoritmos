@@ -8,6 +8,27 @@ public class Profile {
 	private static int G = 3;
 	private static int T = 4;
 	
+	//test de copia
+	public static void main(String[] args) {
+		int[] a1 = {0,1,2,3};
+		int[] a2 = {0,1,0,3};
+		int[][] aa = {a1, a2};
+		printMatrix(aa);
+		
+		int[][] aa2 = new int[5][5];
+		System.out.println(" ");
+		printMatrix(aa2);
+		System.out.println(" ");
+		aa2 = arrayCopy(aa, aa2);
+		printMatrix(aa2);
+	}
+	
+	public static int[][] arrayCopy(int[][] aSource, int[][] aDestination) {
+	    for (int i = 0; i < aSource.length; i++) {
+	        System.arraycopy(aSource[i], 0, aDestination[i], 0, aSource[i].length);
+	    }
+	    return aDestination;
+	}
 	
 	//idx es el id de la secuencia que estoy evaluando
 	public static ProfileSequence getMinimumPenalty(int idx, String x, int pxy, int pgap, int[][] profile) {
@@ -35,7 +56,7 @@ public class Profile {
 		printMatrix(dp);
 		
 	    // calcuting the minimum penalty 
-		int[][] newProfile = crearCopia(profile);
+		int[][] newProfile = crearCopia(profile, x.length());
 	    for (i = 1; i <= m; i++) 
 	    { 
 	        for (j = 1; j <= n; j++) 
@@ -84,32 +105,39 @@ public class Profile {
 		}
 	}
 
-	private static int[][] crearCopia(int[][] src) {
-	    int length = src.length;
-	    int[][] target = new int[length][src[0].length];
-	    for (int i = 0; i < length; i++) {
-	        System.arraycopy(src[i], 0, target[i], 0, src[i].length);
-	    }
-	    return target;
+	private static int[][] crearCopia(int[][] src, int newLength) {
+		int length = src.length;
+		int width = newLength > src[0].length ? newLength : src[0].length;
+		int[][] target = new int[length][width];
+		target = arrayCopy(src, target);
+		return target;
 	}
 
 	private static int getOccurrences(char character, int[][] profile, int i, int idxLetter) {
 		int ocurrences = 0;
+		if(i >= profile[A].length) {
+			printMatrix(profile);
+    	}
 		switch(character) 
 		{ 
 		    case 'A': 
+		    	System.out.println(profile[A].length);
 		    	ocurrences = profile[A][i];
 		    	profile[A][i]++;
 		    case 'C': 
+		    	System.out.println(profile[C].length);
 		    	ocurrences = profile[C][i];
 		    	profile[C][i]++;
 		    case 'G': 
+		    	System.out.println(profile[G].length);
 		    	ocurrences = profile[G][i];
 		    	profile[G][i]++;
 		    case 'T': 
+		    	System.out.println(profile[T].length);
 		    	ocurrences = profile[T][i];
 		    	profile[T][i]++;
 		    default:// "-" 
+		    	System.out.println(profile[GAP].length);
 		    	ocurrences = profile[GAP][i];
 		    	profile[GAP][i]++;
 		}
